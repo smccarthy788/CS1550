@@ -14,6 +14,9 @@ int fid1 = 1;
 size_t size;
 color_t *address;
 
+const int WIDTH = 640;
+const int HEIGHT = 480;
+
 void init_graphics()
 {
     /* Open fb file descriptor */
@@ -45,6 +48,12 @@ void init_graphics()
     ioctls(ter, TCSETS, &terminal);
 }
 
+void draw_pixel(int x, int y, color_t c)
+{
+    int loc = (y * WIDTH) + x;
+    *(address + loc) = c;
+}
+
 void draw_line(color_t c)
 {
     /* Print a single line */
@@ -59,7 +68,7 @@ void draw_line(color_t c)
     }
 }
 
-void sleep_ms(unsigned ms)
+void sleep_ms(long ms)
 {
    nanosleep( ms * 1000000, NULL);
 }

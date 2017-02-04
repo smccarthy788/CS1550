@@ -1,4 +1,4 @@
-/* 
+/*
  * Graphics Library header file
  * (c) Mohammad H. Mofrad, 2017
  */
@@ -16,7 +16,7 @@
 typedef unsigned short color_t;    // |15 11|10  5|4  0|
                                    // |red  |green|blue|
                                    //   5   + 6   + 5  =  16 bits
-// Macros to extract RGB colors 
+// Macros to extract RGB colors
 #define BMASK(c) (c & 0x001F) // Blue mask
 #define GMASK(c) (c & 0x07E0) // Green mask
 #define RMASK(c) (c & 0xF800) // Red mask
@@ -24,6 +24,7 @@ typedef unsigned short color_t;    // |15 11|10  5|4  0|
 void clear_screen();
 void init_graphics();
 void exit_graphics();
+void draw_pixel(int x, int y, color_t c);
 void draw_line(color_t c);
 
 #endif

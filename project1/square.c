@@ -1,8 +1,8 @@
-/* 
+/*
  * Graphics Library driver file
  * (c) Mohammad H. Mofrad, 2017
  */
- 
+
 #include "library.h"
 
 int main(int argc, char** argv)
@@ -14,8 +14,11 @@ int main(int argc, char** argv)
 
    draw_line(0xFFFF);
    sleep_s(5);
-   
+
    clear_screen();
+
+   draw_pixel(0, 0, 5);
+
    exit_graphics();
 
    return (0);
