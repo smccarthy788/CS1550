@@ -1,4 +1,4 @@
-/*
+    /*
  * CS 1550: Graphics library skeleton code for Qemu VM
  * WARNING: This code is the minimal implementation of the project 1.
  *          It is not intended to serve as a reference implementation.
@@ -24,21 +24,25 @@ void init_graphics()
         exit(1);
     }
 
-    /* 
-     * Horizontal resolution (1 row)
-     * Do not hardcode size in your implementation
-     * We skip some ioctls here
-     * Then add the memory mapping using
-     * "address" which is the pointer to the shared memory space with frame buffer (fb)
-     */
-    size = 640 * 1; 
+    struct fb_var_screeninfo var_info;
+    ioctls(fid, FBIOGET_VSCREENINFO, &var_info);
+    struct struct fb_fix_screeninfo fix_info;
+    ioctls(fid, FBIOGET_FSCREENINFO, &fix_info);
+
+    size = var_info.yres_virtual * fix_info.line_length;
     address = mmap(0, size, PROT_READ | PROT_WRITE, MAP_SHARED, fid, 0);
     if(address == (void *) -1)
     {
         perror("Error mapping memory");
         exit(1);
     }
-    /* Skipping ioctls for teminal settings for fid1 */
+
+    int ter = open("/dev/tty0", O_RDWR);
+    struct termios terminal;
+    ioctls(ter, TCGETS, &terminal);
+    terminal.ICANON = 0;
+    terminal.ECHO = 0;
+    ioctls(ter, TCSETS, &terminal);
 }
 
 void draw_line(color_t c)
@@ -48,30 +52,33 @@ void draw_line(color_t c)
     for(off_p =0; off_p < size; off_p++)
     {
         *(address + off_p) = RMASK(c) | GMASK(c) | BMASK(c);
-        /* 
+        /*
           printf("Address(0x%08x), Color(0x%04x) B(0x%04x), G(0x%04x), R(0x%04x) \n",
                 (address + off_p), *(address + off_p), BMASK(c), GMASK(c), RMASK(c));
-        */      
+        */
     }
 }
 
-void sleep_s(unsigned seconds)
+void sleep_ms(unsigned ms)
 {
-   sleep(seconds); /* This is in seconds and not milliseconds */
+   nanosleep( ms * 1000000, NULL);
 }
 
-void clear_screen() 
+void clear_screen()
 {
     write(fid1, "\033[2J", 4);  /* This will do the trick for fid1*/
 }
 
-void exit_graphics() 
+void exit_graphics()
 {
-    /* 
-     * Skipping ioctl for reseting the terminal setting for fid1
-     * Remove the memory mapping
-     * Finally, close fb file desriptor
-     */
+    int ter = open("/dev/tty0", O_RDWR);
+    struct termios terminal;
+    ioctls(ter, TCGETS, &terminal);
+    terminal.ICANON = 1;
+    terminal.ECHO = 1;
+    ioctls(ter, TCSETS, &terminal);
+
+    close(ter);
 
     if(munmap(address, size) == -1)
     {
