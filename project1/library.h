@@ -13,6 +13,8 @@
 #include <fcntl.h>
 #include <sys/mman.h>
 
+#include <iso_font.h>
+
 typedef unsigned short color_t;    // |15 11|10  5|4  0|
                                    // |red  |green|blue|
                                    //   5   + 6   + 5  =  16 bits
